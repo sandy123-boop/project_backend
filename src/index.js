@@ -1,8 +1,12 @@
 import dotenv from "dotenv";
 import { app } from "./app.js";          // Import the configured app
 import connectDB from "./db/index.js";
+import { validateEnvVars } from "./utils/envValidation.js";
 
 dotenv.config({ path: "./.env" });
+
+// Validate environment variables before starting the server
+validateEnvVars();
 
 connectDB()
   .then(() => {
