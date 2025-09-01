@@ -14,11 +14,11 @@ const registerUser = asyncHandler(async (req, res) => {
     //check for user creation
     //return res
 
-    const {fullName, email, username, password} = req.body
+    const {fullname, email, username, password} = req.body
     console.log("email: ", email);
 
     if (
-        [fullName, email, username, password].some((field) =>
+        [fullname, email, username, password].some((field) =>
         field?.trim() === "")
     ) {
         throw new ApiError(400, "All fields are required")
@@ -43,19 +43,27 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     console.log("Starting Cloudinary upload for avatar...");
+    console.log("Calling uploadCloudinary with path:", avatarLocalPath);
     const avatar = await uploadCloudinary(avatarLocalPath);
     console.log("Avatar upload result:", avatar ? "success" : "failed");
+    if (avatar) {
+        console.log("Avatar URL received:", avatar.url);
+    }
     
     console.log("Starting Cloudinary upload for cover image...");
+    console.log("Calling uploadCloudinary with path:", coverImageLocalPath);
     const coverImage = await uploadCloudinary(coverImageLocalPath);
     console.log("Cover image upload result:", coverImage ? "success" : "failed");
+    if (coverImage) {
+        console.log("Cover image URL received:", coverImage?.url);
+    }
 
     if(!avatar){
         throw new ApiError(400, "Could not upload avatar, please try again later")
     }
 
    const user = await User.create({
-        fullName,
+        fullname,
         avatar: avatar.url,
         coverImage: coverImage?.url || "",
         email,
